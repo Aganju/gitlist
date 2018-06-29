@@ -9,6 +9,7 @@ class GitLister extends Component {
       super(props);
 
       this.state = {
+        loading: false,
         showError: false,
         repoList: [],
         repoContributors: {},
@@ -20,6 +21,7 @@ class GitLister extends Component {
     this.org = org;
     this.token = token;
     this.setState({
+      loading: true,
       showError: false,
       repoList: [],
       repoContributors: {},
@@ -29,7 +31,11 @@ class GitLister extends Component {
     this.getFullList(`https://api.github.com/orgs/${org}/repos`).then( (repos) => {
       return this.setState({ repoList: repos})
     }).then(this.getContributors)//wait till all repo requests are done before compiling contributors
-    .then(this.compileContributors);
+    .then(this.compileContributors).then(() => {
+      this.setState({
+        loading: false
+      })
+    });
 
   }
 
@@ -54,7 +60,7 @@ class GitLister extends Component {
       contributions: totals[contributor]
     }));
 
-    this.setState({compiledContributors: contList})
+    return this.setState({compiledContributors: contList})
   }
 
   getContributors = () => {
@@ -122,12 +128,14 @@ class GitLister extends Component {
     return (
       <div>
         <Header submit={this.submit}/>
-
         <div className={this.state.showError ? 'error' : 'hidden'}>
             Something went wrong, please try again.
         </div>
 
-        <Tables repoList={this.compileRepos()} contributors={this.state.compiledContributors}/>
+        <div className='main'>
+          <Tables repoList={this.compileRepos()} contributors={this.state.compiledContributors}/>
+          <div className={this.state.loading ? 'loader' : 'hidden'}> </div>
+        </div>
       </div>
     );
   }

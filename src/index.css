@@ -6,9 +6,33 @@ body {
   font-family: sans-serif;
 }
 
+@keyframes spin {
+  to{
+    transform: rotate(360deg);
+  }
+}
+
+.loader{
+  position: absolute;
+  opacity: .8;
+  top: 45%;
+  left: 45%;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  border: 20px solid lightgray;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
 .hidden{
   display: none;
 }
+
+.main{
+  position: relative;
+}
+
+
 
 .tables{
   display: flex;
